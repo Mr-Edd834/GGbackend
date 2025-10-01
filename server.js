@@ -1,12 +1,16 @@
-const express=require('express');
-const cors=require('cors');
 
-require("dotenv").config();
- const port=process.env.PORT;   
 
- const hostname=process.env.HOSTNAME;
+const express = require('express');
+const app = express();
 
-    const app=express();
-    app.use(cors());
-    app.use(express.json());
+// force defaults to test
+const PORT = 3000;
+const HOST = "127.0.0.1";
 
+app.get('/', (req, res) => {
+  res.send('it is working 😎');
+});
+
+app.listen(PORT, () => {
+  console.log(`✅ Server is running at http://${HOST}:${PORT}`);
+});
