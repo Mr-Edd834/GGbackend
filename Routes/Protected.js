@@ -1,5 +1,5 @@
 const express = require("express");
-const { ensureAuth } = require("../Middleware/ensureAuth");
+const ensureAuth = require("../Middleware/ensureAuth");
 const router = express.Router();
 
 // Protect these routes
