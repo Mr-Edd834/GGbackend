@@ -74,7 +74,6 @@ app.use((req, res) => {
 });
 
 // --- START SERVER ---
-app.listen(PORT, HOST, () => {
-  console.log(`✅ Server running on http://${HOST}:${PORT}`);
-}
-);
+app.listen(PORT, () => {
+  console.log(`✅ Server running on 0.0.0.0:${PORT}`);
+});
