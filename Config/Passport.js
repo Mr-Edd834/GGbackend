@@ -3,6 +3,14 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../Models/User");
 
 module.exports = (passport) => {
+  // Safe debug: log presence (not values) of required envs and callback URL
+  const hasClientId = Boolean(process.env.GOOGLE_AUTH_CLIENT_ID);
+  const hasClientSecret = Boolean(process.env.GOOGLE_AUTH_CLIENT_SECRET);
+  const callbackUrl = process.env.GOOGLE_CALLBACK_URL;
+  console.log(
+    `🔎 Google OAuth envs -> CLIENT_ID: ${hasClientId}, CLIENT_SECRET: ${hasClientSecret}, CALLBACK_URL: ${callbackUrl}`
+  );
+
   passport.use(
     new GoogleStrategy(
       {

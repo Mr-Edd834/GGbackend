@@ -8,6 +8,13 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "https://mockgg3.vercel.app";
 // Start Google OAuth
 router.get(
   "/google",
+  (req, _res, next) => {
+    console.log("🔁 /auth/google hit", {
+      callbackUrl: process.env.GOOGLE_CALLBACK_URL,
+      clientIdPresent: Boolean(process.env.GOOGLE_AUTH_CLIENT_ID),
+    });
+    next();
+  },
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
