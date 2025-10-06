@@ -54,7 +54,7 @@ app.use(
 );
 
 // --- PASSPORT CONFIG ---
-require("./Config/Passport"); // this file already imports & sets up passport
+require("./Config/Passport")(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
