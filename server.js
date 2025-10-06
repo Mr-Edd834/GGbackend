@@ -19,14 +19,17 @@ require('dotenv').config();
 const PORT = process.env.PORT ;
 const HOST = process.env.HOST;
 
+// Trust proxy for Render/Heroku-style proxies
+app.set('trust proxy', 1);
+
 // Middleware setup
 app.use(cors({ origin: "https://mockgg3.vercel.app/", credentials: true })); 
 app.use(express.json());
 
 
-// Body parser
-app.use(express.json());
-app.use(cors());
+// Body parser (avoid duplicates)
+// app.use(express.json());
+// app.use(cors());
 
 
 
@@ -51,15 +54,15 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    },
   })
 );
 
 // Passport config
 require("./Config/Passport")(passport);
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
 
