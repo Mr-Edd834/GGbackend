@@ -1,44 +1,31 @@
-
-
-const express = require('express');
+// server.js
+const express = require("express");
 const app = express();
-app.use(express.json());
+require("dotenv").config();
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const cors = require("cors");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
 
+// Trust proxy (needed for Render/Heroku secure cookies)
+app.set("trust proxy", 1);
 
-// use environment variables from .env file or system environment 
-const dotenv = require("dotenv");
-require('dotenv').config();
+// Environment vars
+const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || "0.0.0.0";
+const NODE_ENV = process.env.NODE_ENV || "development";
 
-// force defaults to test
-const PORT = process.env.PORT ;
-const HOST = process.env.HOST;
-
-// Trust proxy for Render/Heroku-style proxies
-app.set('trust proxy', 1);
-
-// Middleware setup
-app.use(cors({ origin: "https://mockgg3.vercel.app/", credentials: true })); 
+// --- MIDDLEWARE SETUP ---
+app.use(
+  cors({
+    origin: "https://mockgg3.vercel.app", // your frontend domain
+    credentials: true,
+  })
+);
 app.use(express.json());
 
-
-// Body parser (avoid duplicates)
-// app.use(express.json());
-// app.use(cors());
-
-
-
-// app.get('/', (req, res) => {
-//   res.send('it is working 😎');
-// });
-
-
-// DB connect
+// --- CONNECT TO MONGODB ---
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -47,53 +34,47 @@ mongoose
   .then(() => console.log("✅ Connected to MongoDB"))
   .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
-  
-// Sessions
+// --- EXPRESS SESSION SETUP ---
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "supersecretkey",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI, // use same Mongo connection as your DB
-      collectionName: "sessions", // optional, default is "sessions"
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
     }),
-      cookie: {
-        secure: process.env.NODE_ENV === "production", // true if hosted on https
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24, // 1 day
-      },
+    cookie: {
+      secure: NODE_ENV === "production", // HTTPS-only in production
+      httpOnly: true,
+      sameSite: NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
   })
 );
 
-
-// Passport config
-require("./Config/Passport")(passport);
+// --- PASSPORT CONFIG ---
+require("./Config/Passport"); // this file already imports & sets up passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-// Importing routes
-const homeRoutes = require('./Routes/Home');
-const authRoutes = require("./Routes/Auth");   // new auth routes
-const User = require("./Models/User");
-const { ensureAuth } = require("./Middleware/ensureAuth");
+// --- ROUTES IMPORTS ---
+const homeRoutes = require("./Routes/Home");
+const authRoutes = require("./Routes/Auth");
 const protectedRoutes = require("./Routes/Protected");
 
-
-
-// Using imported routes. Its like <meals/>
-app.use("/",homeRoutes)
+// --- ROUTES USAGE ---
+app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/protected", protectedRoutes);
 
-app.listen(PORT, () => {
-  console.log(`✅ Server is running at http://${HOST}:${PORT}`);
+// --- FALLBACK ---
+app.use("*", (req, res) => {
+  res.status(404).json({ error: "Route not found 🚫" });
 });
 
-
-
-
-
-
-
+// --- START SERVER ---
+app.listen(PORT, HOST, () => {
+  console.log(`✅ Server running on http://${HOST}:${PORT}`);
+}
+);
