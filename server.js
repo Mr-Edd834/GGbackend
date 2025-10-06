@@ -68,8 +68,8 @@ app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/protected", protectedRoutes);
 
-// --- FALLBACK ---
-app.use("*", (req, res) => {
+// --- FALLBACK (Express 5: no wildcard string) ---
+app.use((req, res) => {
   res.status(404).json({ error: "Route not found 🚫" });
 });
 
