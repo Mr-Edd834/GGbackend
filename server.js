@@ -37,7 +37,7 @@ mongoose
 // --- EXPRESS SESSION SETUP ---
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "supersecretkey",
+    secret: process.env.SESSION_SECRET || "default_session_secret",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -69,7 +69,7 @@ app.use("/auth", authRoutes);
 app.use("/protected", protectedRoutes);
 
 // --- FALLBACK ---
-app.use("*", (req, res) => {
+app.use((req, res) => {
   res.status(404).json({ error: "Route not found 🚫" });
 });
 
