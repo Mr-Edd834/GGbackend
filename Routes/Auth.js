@@ -1,9 +1,6 @@
 // routes/auth.js
 const express = require("express");
 const passport = require("passport");
-
-const authMiddleware = require('../middleware/authMiddleware');
-
 const router = express.Router();
 const FRONTEND_URL = process.env.FRONTEND_URL || "https://mockgg4.vercel.app";
 
