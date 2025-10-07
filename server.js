@@ -62,11 +62,12 @@ app.use(passport.session());
 const homeRoutes = require("./Routes/Home");
 const authRoutes = require("./Routes/Auth");
 const protectedRoutes = require("./Routes/Protected");
-
+const partnerRoutes = require('./Routes/partnerRoutes');
 // --- ROUTES USAGE ---
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/protected", protectedRoutes);
+app.use('/api/partners', partnerRoutes);
 
 // --- FALLBACK (Express 5: no wildcard string) ---
 app.use((req, res) => {

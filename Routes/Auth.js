@@ -1,9 +1,20 @@
 // routes/auth.js
 const express = require("express");
 const passport = require("passport");
+const authController = require('../controllers/authController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();
 const FRONTEND_URL = process.env.FRONTEND_URL || "https://mockgg3.vercel.app";
+
+// Public routes
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+
+// Protected routes (require authentication)
+router.get('/verify', authMiddleware, authController.verify);
+router.post('/logout', authMiddleware, authController.logout);
+
 
 // Start Google OAuth
 router.get(
