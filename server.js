@@ -12,14 +12,14 @@ const cors = require("cors");
 app.set("trust proxy", 1);
 
 // Environment vars
-const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || "0.0.0.0";
-const NODE_ENV = process.env.NODE_ENV || "development";
+const PORT = process.env.PORT 
+const HOST = process.env.HOST 
+const NODE_ENV = process.env.NODE_ENV 
 
 // --- MIDDLEWARE SETUP ---
 app.use(
   cors({
-    origin: "https://mockgg3.vercel.app", // your frontend domain
+    origin: "https://mockgg4.vercel.app", // your frontend domain
     credentials: true,
   })
 );
@@ -62,19 +62,19 @@ app.use(passport.session());
 const homeRoutes = require("./Routes/Home");
 const authRoutes = require("./Routes/Auth");
 const protectedRoutes = require("./Routes/Protected");
-const partnerRoutes = require('./Routes/partnerRoutes');
+
 // --- ROUTES USAGE ---
 app.use("/", homeRoutes);
 app.use("/auth", authRoutes);
 app.use("/protected", protectedRoutes);
-app.use('/api/partners', partnerRoutes);
 
-// --- FALLBACK (Express 5: no wildcard string) ---
-app.use((req, res) => {
+// --- FALLBACK ---
+app.use("*", (req, res) => {
   res.status(404).json({ error: "Route not found 🚫" });
 });
 
 // --- START SERVER ---
-app.listen(PORT, () => {
-  console.log(`✅ Server running on 0.0.0.0:${PORT}`);
-});
+app.listen(PORT, HOST, () => {
+  console.log(`✅ Server running on http://${HOST}:${PORT}`);
+}
+);
